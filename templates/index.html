@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostGen Agent - AI-Powered Instagram Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Panel - Input Section -->
+        <aside class="input-panel">
+            <div class="panel-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5"/>
+                            <circle cx="12" cy="12" r="4"/>
+                            <circle cx="18" cy="6" r="1.5" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="brand-name">PostGen Agent</span>
+                        <span class="tagline">AI-Powered Posts</span>
+                    </div>
+                </div>
+                <div class="badge">
+                    <span class="pulse"></span>
+                    Powered by Gemini 2.5 Flash
+                </div>
+            </div>
+
+            <form id="generateForm" class="form-container">
+                <!-- Brand Presets for Demo -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                            </svg>
+                        </span>
+                        Quick Demo Presets
+                    </label>
+                    <div class="preset-cards">
+                        <div class="preset-card" data-preset="socialbunkr">
+                            <div class="preset-logo">
+                                <img src="/static/presets/socialbunkr-logo.jpeg" alt="SocialBunkr">
+                            </div>
+                            <div class="preset-info">
+                                <span class="preset-name">SocialBunkr</span>
+                                <span class="preset-industry">Travel & Hospitality</span>
+                            </div>
+                            <div class="preset-check">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="preset-card" data-preset="hylancer">
+                            <div class="preset-logo">
+                                <img src="/static/presets/hylancer-logo.jpeg" alt="Hylancer">
+                            </div>
+                            <div class="preset-info">
+                                <span class="preset-name">Hylancer</span>
+                                <span class="preset-industry">Technology</span>
+                            </div>
+                            <div class="preset-check">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preset-examples" id="presetExamples" hidden>
+                        <label class="example-label">Example Content Ideas:</label>
+                        <div class="example-chips" id="exampleChips">
+                            <!-- Example chips will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider">
+                    <span>or upload your own</span>
+                </div>
+
+                <!-- Logo Upload -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </span>
+                        Brand Logo
+                    </label>
+                    <div class="upload-zone" id="uploadZone">
+                        <input type="file" id="logoInput" accept="image/*" hidden>
+                        <div class="upload-content" id="uploadContent">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                                    <path d="M21 15l-5-5L5 21"/>
+                                </svg>
+                            </div>
+                            <p class="upload-text">Drag & drop your logo here</p>
+                            <p class="upload-hint">or click to browse</p>
+                        </div>
+                        <div class="upload-preview" id="uploadPreview" hidden>
+                            <img id="logoPreview" alt="Logo preview">
+                            <button type="button" class="remove-logo" id="removeLogo">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="color-extraction" id="colorExtraction" hidden>
+                        <div class="extraction-loading" id="extractionLoading">
+                            <div class="spinner"></div>
+                            <span>Extracting Brand Colors...</span>
+                        </div>
+                        <div class="color-palette" id="colorPalette" hidden>
+                            <span class="palette-label">Extracted from Logo (click to select primary)</span>
+                            <div class="colors" id="colorSwatches"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Palette Options -->
+                    <div class="palette-options" id="paletteOptions" hidden>
+                        <span class="palette-label">Or choose a preset palette:</span>
+                        <div class="palette-grid">
+                            <div class="palette-option" data-palette="sunset">
+                                <div class="palette-preview">
+                                    <span style="background:#FF6B6B"></span>
+                                    <span style="background:#FEC89A"></span>
+                                    <span style="background:#FFD93D"></span>
+                                    <span style="background:#C1FFD7"></span>
+                                </div>
+                                <span class="palette-name">Sunset</span>
+                            </div>
+                            <div class="palette-option" data-palette="ocean">
+                                <div class="palette-preview">
+                                    <span style="background:#0077B6"></span>
+                                    <span style="background:#00B4D8"></span>
+                                    <span style="background:#90E0EF"></span>
+                                    <span style="background:#CAF0F8"></span>
+                                </div>
+                                <span class="palette-name">Ocean</span>
+                            </div>
+                            <div class="palette-option" data-palette="forest">
+                                <div class="palette-preview">
+                                    <span style="background:#2D6A4F"></span>
+                                    <span style="background:#40916C"></span>
+                                    <span style="background:#52B788"></span>
+                                    <span style="background:#95D5B2"></span>
+                                </div>
+                                <span class="palette-name">Forest</span>
+                            </div>
+                            <div class="palette-option" data-palette="purple">
+                                <div class="palette-preview">
+                                    <span style="background:#7209B7"></span>
+                                    <span style="background:#9D4EDD"></span>
+                                    <span style="background:#C77DFF"></span>
+                                    <span style="background:#E0AAFF"></span>
+                                </div>
+                                <span class="palette-name">Purple</span>
+                            </div>
+                            <div class="palette-option" data-palette="coral">
+                                <div class="palette-preview">
+                                    <span style="background:#FF6B6B"></span>
+                                    <span style="background:#F472B6"></span>
+                                    <span style="background:#FB7185"></span>
+                                    <span style="background:#FECDD3"></span>
+                                </div>
+                                <span class="palette-name">Coral</span>
+                            </div>
+                            <div class="palette-option" data-palette="midnight">
+                                <div class="palette-preview">
+                                    <span style="background:#1A1B2E"></span>
+                                    <span style="background:#2D3154"></span>
+                                    <span style="background:#6366F1"></span>
+                                    <span style="background:#A5B4FC"></span>
+                                </div>
+                                <span class="palette-name">Midnight</span>
+                            </div>
+                            <div class="palette-option" data-palette="golden">
+                                <div class="palette-preview">
+                                    <span style="background:#B8860B"></span>
+                                    <span style="background:#DAA520"></span>
+                                    <span style="background:#FFD700"></span>
+                                    <span style="background:#FFF8DC"></span>
+                                </div>
+                                <span class="palette-name">Golden</span>
+                            </div>
+                            <div class="palette-option" data-palette="monochrome">
+                                <div class="palette-preview">
+                                    <span style="background:#1A1A1A"></span>
+                                    <span style="background:#4A4A4A"></span>
+                                    <span style="background:#7A7A7A"></span>
+                                    <span style="background:#DADADA"></span>
+                                </div>
+                                <span class="palette-name">Mono</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brand Profile -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        Brand Profile
+                    </label>
+                    <div class="input-group">
+                        <input type="text" id="companyName" placeholder="Company Name" required>
+                        <div class="input-glow"></div>
+                    </div>
+                    <div class="input-group">
+                        <select id="industry" required>
+                            <option value="">Select Industry</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Fashion & Apparel">Fashion & Apparel</option>
+                            <option value="Food & Beverage">Food & Beverage</option>
+                            <option value="Health & Wellness">Health & Wellness</option>
+                            <option value="Beauty & Cosmetics">Beauty & Cosmetics</option>
+                            <option value="Travel & Hospitality">Travel & Hospitality</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Education">Education</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Real Estate">Real Estate</option>
+                            <option value="Automotive">Automotive</option>
+                            <option value="E-commerce">E-commerce</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <div class="input-glow"></div>
+                    </div>
+                </div>
+
+                <!-- Content Input -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                        </span>
+                        Post Content
+                    </label>
+                    <div class="input-group textarea-group">
+                        <textarea id="contentTheme" placeholder="Describe your post theme...&#10;e.g., 'Summer sale announcement with 30% off all products'" rows="4" required></textarea>
+                        <div class="input-glow"></div>
+                    </div>
+                </div>
+
+                <!-- Tone Selection -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                                <line x1="9" y1="9" x2="9.01" y2="9"/>
+                                <line x1="15" y1="9" x2="15.01" y2="9"/>
+                            </svg>
+                        </span>
+                        Tone & Style
+                    </label>
+                    <div class="tone-options">
+                        <label class="tone-option">
+                            <input type="radio" name="tone" value="creative" checked>
+                            <span class="tone-label">✨ Creative</span>
+                        </label>
+                        <label class="tone-option">
+                            <input type="radio" name="tone" value="professional">
+                            <span class="tone-label">💼 Professional</span>
+                        </label>
+                        <label class="tone-option">
+                            <input type="radio" name="tone" value="playful">
+                            <span class="tone-label">🎉 Playful</span>
+                        </label>
+                        <label class="tone-option">
+                            <input type="radio" name="tone" value="minimal">
+                            <span class="tone-label">🎯 Minimal</span>
+                        </label>
+                        <label class="tone-option">
+                            <input type="radio" name="tone" value="bold">
+                            <span class="tone-label">🔥 Bold</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Number of Posts -->
+                <div class="form-section">
+                    <label class="section-label">
+                        <span class="label-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </span>
+                        Number of Posts
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="numPosts" min="1" max="5" value="2" class="slider">
+                        <div class="slider-labels">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                        </div>
+                        <div class="slider-value">
+                            <span id="sliderValue">2</span> posts
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <button type="submit" class="generate-btn" id="generateBtn">
+                    <span class="btn-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                        <span>Magic Generate</span>
+                    </span>
+                    <span class="btn-loading" hidden>
+                        <div class="btn-spinner"></div>
+                        <span>Generating...</span>
+                    </span>
+                </button>
+            </form>
+
+        </aside>
+
+        <!-- Right Panel - Preview Gallery -->
+        <main class="preview-panel">
+            <div class="preview-header">
+                <h2>Generated Posts</h2>
+                <div class="header-actions" id="headerActions" hidden>
+                    <button class="action-btn" id="downloadAllBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download All
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-illustration">
+                        <svg viewBox="0 0 200 200" fill="none">
+                            <circle cx="100" cy="100" r="80" stroke="currentColor" stroke-width="2" stroke-dasharray="8 8" opacity="0.3"/>
+                            <rect x="60" y="60" width="80" height="80" rx="8" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                            <circle cx="80" cy="80" r="8" fill="currentColor" opacity="0.3"/>
+                            <path d="M60 120 L90 95 L110 110 L140 80" stroke="currentColor" stroke-width="2" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <h3>No posts generated yet</h3>
+                    <p>Fill in your brand details and click "Magic Generate" to create stunning Instagram posts</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState" hidden>
+                    <div class="phone-mockup loading">
+                        <div class="phone-notch"></div>
+                        <div class="phone-screen">
+                            <div class="instagram-header skeleton"></div>
+                            <div class="instagram-grid">
+                                <div class="skeleton-post shimmer"></div>
+                                <div class="skeleton-post shimmer"></div>
+                                <div class="skeleton-post shimmer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="loading-text">
+                        <span class="loading-emoji">✨</span>
+                        Creating your brand magic...
+                    </p>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="results-container" id="resultsContainer" hidden>
+                    <!-- Hidden grid for compatibility -->
+                    <div id="instagramGrid" hidden></div>
+                    
+                    <!-- Generated post cards -->
+                    <div class="preview-cards" id="previewCards">
+                        <!-- Preview cards will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal" hidden>
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <img id="modalImage" alt="Full size preview">
+            <div class="modal-actions">
+                <button class="modal-btn" id="modalDownload">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Download
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
