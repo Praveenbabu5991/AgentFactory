@@ -24,7 +24,6 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['GENERATED_FOLDER'], exist_ok=True)
 
 # Configure Gemini API with new SDK
-GEMINI_API_KEY = "AIzaSyA7oHRsBE5VFgdxTchxZOpBXspGHOaV2Fs"
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
