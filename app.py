@@ -21,6 +21,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['GENERATED_FOLDER'], exist_ok=True)
 
+GEMINI_API_KEY = "AIzaSyD0ecutQuFfVqaVkQE6KFUYEIg5HqqOv5M"
 # Configure Gemini API with new SDK
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
